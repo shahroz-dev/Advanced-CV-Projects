@@ -1,6 +1,7 @@
 import cv2
 import mediapipe as mp
 import time
+import os
 
 
 class handDetector:
@@ -43,6 +44,11 @@ class handDetector:
 
 
 def main():
+    fourcc = cv2.VideoWriter_fourcc('X', 'V', 'I', 'D')
+    dst_path = "Saved_Results/"
+    if not os.path.exists(dst_path):
+        os.makedirs(dst_path)
+    videoWriter = cv2.VideoWriter(dst_path + 'handTracking.avi', fourcc, 30.0, (640, 480))
     pTime = 0
     cap = cv2.VideoCapture(0)
     detector = handDetector()
@@ -58,10 +64,15 @@ def main():
 
         cv2.putText(img, str(int(fps)), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
         cv2.imshow("Image", img)
+        videoWriter.write(img)
 
         key = cv2.waitKey(1) & 0xFF
         if key == ord('q'):
             break
+
+    cap.release()
+    videoWriter.release()
+    cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":  # This module will only run if we run this file i.e. call the main function
